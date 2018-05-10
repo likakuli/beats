@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
+	"net/http"
 	"os"
 	"time"
 
@@ -13,13 +15,14 @@ import (
 	"github.com/elastic/beats/libbeat/common/cfgwarn"
 	"github.com/elastic/beats/libbeat/logp"
 	"github.com/elastic/beats/libbeat/processors"
-
 	"github.com/ericchiang/k8s"
 	"github.com/ghodss/yaml"
+	"golang.org/x/net/http2"
 )
 
 const (
-	timeout = time.Second * 5
+	timeout          = time.Second * 5
+	defaultNamespace = "default"
 )
 
 var (
@@ -84,7 +87,12 @@ func newKubernetesAnnotator(cfg *common.Config) (processors.Processor, error) {
 	}
 
 	var client *k8s.Client
-	if config.InCluster == true {
+	if config.ApiServer != "" {
+		client, err = newClient(config.ApiServer)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to create client by apiserver: %v", err)
+		}
+	} else if config.InCluster == true {
 		client, err = k8s.NewInClusterClient()
 		if err != nil {
 			return nil, fmt.Errorf("Unable to get in cluster configuration: %v", err)
@@ -168,8 +176,33 @@ func (k *kubernetesAnnotator) Run(event *beat.Event) (*beat.Event, error) {
 func (*kubernetesAnnotator) String() string { return "add_kubernetes_metadata" }
 
 func validate(config kubeAnnotatorConfig) error {
-	if !config.InCluster && config.KubeConfig == "" {
-		return errors.New("`kube_config` path can't be empty when in_cluster is set to false")
+	if !config.InCluster && config.KubeConfig == "" && config.ApiServer == "" {
+		return errors.New("`kube_config` path or `api_server` can't be empty when in_cluster is set to false")
 	}
 	return nil
+}
+
+func newClient(apiserver string) (*k8s.Client, error) {
+	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+	if err := http2.ConfigureTransport(transport); err != nil {
+		return nil, err
+	}
+
+	client := &k8s.Client{
+		Endpoint:  apiserver,
+		Namespace: defaultNamespace,
+		Client: &http.Client{
+			Transport: transport,
+		},
+	}
+	return client, nil
 }
