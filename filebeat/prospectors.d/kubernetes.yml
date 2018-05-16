@@ -1,9 +1,0 @@
-- type: docker
-  containers.ids:
-  - "*"
-  containers.path: "./"
-  processors:
-    - add_kubernetes_metadata:
-        api_server: http://10.202.43.132:8080
-        in_cluster: false
-        host: 10.202.43.133

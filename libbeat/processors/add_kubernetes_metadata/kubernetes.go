@@ -17,11 +17,10 @@ import (
 	"github.com/elastic/beats/libbeat/processors"
 	"github.com/ericchiang/k8s"
 	"github.com/ghodss/yaml"
-	"golang.org/x/net/http2"
 )
 
 const (
-	timeout          = time.Second * 5
+	timeout          = time.Second * 5000
 	defaultNamespace = "default"
 )
 
@@ -192,9 +191,6 @@ func newClient(apiserver string) (*k8s.Client, error) {
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
-	}
-	if err := http2.ConfigureTransport(transport); err != nil {
-		return nil, err
 	}
 
 	client := &k8s.Client{
