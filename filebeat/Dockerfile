@@ -1,16 +1,23 @@
-FROM golang:1.9.2
-MAINTAINER Nicolas Ruflin <ruflin@elastic.co>
+FROM centos:7
+MAINTAINER Elastic Docker Team <docker@elastic.co>
 
-RUN set -x && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-         netcat python-pip virtualenv && \
-    apt-get clean
+RUN yum update -y && yum install -y curl && yum clean all
 
-RUN pip install --upgrade setuptools
+ADD filebeat-6.2.4-linux-x86_64/ /usr/share/filebeat
 
-# Setup work environment
-ENV FILEBEAT_PATH /go/src/github.com/elastic/beats/filebeat
+ADD filebeat /usr/share/filebeat
 
-RUN mkdir -p $FILEBEAT_PATH/build/coverage
-WORKDIR $FILEBEAT_PATH
+
+ENV ELASTIC_CONTAINER true
+ENV PATH=/usr/share/filebeat:$PATH
+
+COPY config /usr/share/filebeat
+
+# Add entrypoint wrapper script
+ADD docker-entrypoint /usr/local/bin
+
+WORKDIR /usr/share/filebeat
+RUN mkdir data logs & chmod +x /usr/local/bin/docker-entrypoint
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+CMD ["-e"]
