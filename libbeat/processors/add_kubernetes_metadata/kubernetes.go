@@ -180,7 +180,7 @@ func validate(config kubeAnnotatorConfig) error {
 	return nil
 }
 
-func newClient(apiserver string) (*k8s.Client, error) {
+func newClient(apiserver, namespace string) (*k8s.Client, error) {
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
