@@ -20,8 +20,7 @@ import (
 )
 
 const (
-	timeout          = time.Second * 5000
-	defaultNamespace = "default"
+	timeout = time.Second * 5000
 )
 
 var (
@@ -87,7 +86,7 @@ func newKubernetesAnnotator(cfg *common.Config) (processors.Processor, error) {
 
 	var client *k8s.Client
 	if config.ApiServer != "" {
-		client, err = newClient(config.ApiServer)
+		client, err = newClient(config.ApiServer, config.Namespace)
 		if err != nil {
 			return nil, fmt.Errorf("Unable to create client by apiserver: %v", err)
 		}
@@ -195,7 +194,7 @@ func newClient(apiserver string) (*k8s.Client, error) {
 
 	client := &k8s.Client{
 		Endpoint:  apiserver,
-		Namespace: defaultNamespace,
+		Namespace: namespace,
 		Client: &http.Client{
 			Transport: transport,
 		},

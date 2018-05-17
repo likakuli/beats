@@ -10,7 +10,7 @@ filebeat.prospectors:
         matchers:
         - logs_path:
             logs_path: D:\golang\src\github.com\elastic\beats\filebeat
-  reload.enabled: true
+  reload.enabled: false
 filebeat.confog.modules:
     path: D:\golang\src\github.com\elastic\beats\filebeat\modules.d\*.yml
     reload.enabled: false
