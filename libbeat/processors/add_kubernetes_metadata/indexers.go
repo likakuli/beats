@@ -143,7 +143,9 @@ func (g *GenDefaultMeta) GenerateMetaData(pod *Pod) common.MapStr {
 			"name": pod.Metadata.Name,
 		},
 		"namespace": pod.Metadata.Namespace,
-		"node":      pod.Spec.NodeName,
+		"node": common.MapStr{
+			"name": pod.Spec.NodeName,
+		},
 	}
 
 	if len(labelMap) != 0 {
@@ -216,7 +218,8 @@ func (c *ContainerIndexer) GetMetadata(pod *Pod) []MetadataIndex {
 
 		containerMeta := commonMeta.Clone()
 		containerMeta["container"] = common.MapStr{
-			"name": status.Name,
+			"name":  status.Name,
+			"image": status.Image,
 		}
 		metadata = append(metadata, MetadataIndex{
 			Index: cID,

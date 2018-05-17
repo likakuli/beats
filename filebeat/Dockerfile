@@ -4,7 +4,8 @@ MAINTAINER kaku li
 RUN apk update && apk add ca-certificates tzdata && rm -rf /var/cache/apk/* && mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2 && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone && mkdir -p /usr/share/filebeat
 
 ADD filebeat-6.2.4-linux-x86_64/ /usr/share/filebeat
-
+ADD filebeat_embed.yml /etc
+RUN mv /etc/filebeat_embed.yml /etc/filebeat.yml
 ADD filebeat /usr/share/filebeat
 
 
