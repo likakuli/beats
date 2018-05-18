@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	timeout = time.Second * 5000
+	timeout = time.Second * 5
 )
 
 var (
