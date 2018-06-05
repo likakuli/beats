@@ -7,7 +7,15 @@ filebeat.prospectors:
         api_server: ${K8S_APISERVER}
         namespace: ${K8S_NAMESPACE}
   reload.enabled: true
+
+fields_under_root: true
+fields:
+  kubernetes:
+    cluster:
+      name: ${K8S_CLUSTER}
+
 logging.level: ${FB_LOGLEVEL}
+
 setup.template.name: "filebeat-${K8S_CLUSTER}"        #顶格，和output对其
 setup.template.pattern: "filebeat-${K8S_CLUSTER}-*"   #顶格，和output对其
 output.elasticsearch:
