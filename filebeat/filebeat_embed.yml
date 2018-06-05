@@ -8,5 +8,8 @@ filebeat.prospectors:
         namespace: ${K8S_NAMESPACE}
   reload.enabled: true
 logging.level: ${FB_LOGLEVEL}
+setup.template.name: "filebeat-${K8S_CLUSTER}"        #顶格，和output对其
+setup.template.pattern: "filebeat-${K8S_CLUSTER}-*"   #顶格，和output对其
 output.elasticsearch:
   hosts: ['${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}']
+  index: "filebeat-${K8S_CLUSTER}-%{+yyyy.MM.dd}"
