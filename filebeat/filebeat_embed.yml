@@ -6,13 +6,12 @@ filebeat.prospectors:
     - add_kubernetes_metadata:
         api_server: ${K8S_APISERVER}
         namespace: ${K8S_NAMESPACE}
+  fields_under_root: true
+  fields:
+    kubernetes:
+      cluster:
+        name: ${K8S_CLUSTER}
   reload.enabled: true
-
-fields_under_root: true
-fields:
-  kubernetes:
-    cluster:
-      name: ${K8S_CLUSTER}
 
 logging.level: ${FB_LOGLEVEL}
 
