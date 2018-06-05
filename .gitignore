@@ -5,7 +5,7 @@
 /build
 /*/data
 /*/logs
-/*/fields.yml
+# /*/fields.yml
 /*/*.template*.json
 
 # Files
