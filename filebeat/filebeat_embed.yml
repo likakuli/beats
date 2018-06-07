@@ -19,7 +19,7 @@ logging.level: ${FB_LOGLEVEL}
 setup.template.name: "filebeat-${K8S_CLUSTER}"        #顶格，和output对其
 setup.template.pattern: "filebeat-${K8S_CLUSTER}-*"   #顶格，和output对其
 output.elasticsearch:
-  hosts: ['${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}']
+  hosts: ['${ES_HOST}:${ES_PORT}']
   username: ${ES_USERNAME}
   password: ${ES_PASSWORD}
   protocal: ${ES_PROTOCOL}
