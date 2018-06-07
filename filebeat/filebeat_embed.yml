@@ -6,6 +6,7 @@ filebeat.prospectors:
     - add_kubernetes_metadata:
         api_server: ${K8S_APISERVER}
         namespace: ${K8S_NAMESPACE}
+        sync_period: ${K8S_SYNC_PERIOD}
   fields_under_root: true
   fields:
     kubernetes:
@@ -19,4 +20,7 @@ setup.template.name: "filebeat-${K8S_CLUSTER}"        #顶格，和output对其
 setup.template.pattern: "filebeat-${K8S_CLUSTER}-*"   #顶格，和output对其
 output.elasticsearch:
   hosts: ['${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}']
+  username: ${ES_USERNAME}
+  password: ${ES_PASSWORD}
+  protocal: ${ES_PROTOCOL}
   index: "filebeat-${K8S_CLUSTER}-%{+yyyy.MM.dd}"
